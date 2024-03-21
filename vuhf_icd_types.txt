@@ -1,0 +1,11 @@
+
+           Frequency_Tens_Digit =>
+             (Kind           => Conversion_Types.Scaled_Int,
+              In_Validity    => (Kind => Conversion_Types.Msg_Only),
+              Scaled_Int_Fmt =>
+                (Location     => (Word => 0, Msb => 0, Lsb => 3),
+                 Msb_Sign_Bit    => False,
+                 Min_Value       => 0,
+                 Max_Value       => 150,
+                 Lsb_Weight      => 10)),
+    
