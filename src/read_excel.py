@@ -1,12 +1,8 @@
 import openpyxl
+import tkinter as tk
+from tkinter import filedialog
 
-#def read_excel_file(filename):
-
-#    raw_data = []
-    
-#    return raw_data
-
-def parse_excel_table(file_path, sheet_name,start_cell, end_cell):
+def parse_excel_table(file_path, sheet_name, start_cell, end_cell):
     data_list = []
 
     # Load the Excel file
@@ -45,20 +41,96 @@ def parse_map(map_str):
     lines = map_str.split(",\n")
     for line in lines:
         line = line.strip()
-        print(line)
-        dec_code, name = values = line.split(" ",1)
-        map_list.append({"Dec_Code": dec_code, "Name": name})
+        if line:
+            try:
+                dec_code, name = line.split(" ", 1)
+                map_list.append({"Dec_Code": dec_code, "Name": name})
+            except ValueError:
+                # Handle the case when there are not enough values to unpack
+                pass
     return map_list
 
-# Example usage
-file_path = "C:\\Users\\fabate\\Downloads\\C27J-FBS_SRD_Data_Dictionary.xlsm"  # Update with your Excel file path
-sheet_name = "IRS"
-start_cell = ("A", 2)    # Update with start cell coordinates
-end_cell = ("P", 10)    # Update with end cell coordinates
+def browse_file(entry):
+    filename = filedialog.askopenfilename()
+    entry.delete(0, tk.END)
+    entry.insert(0, filename)
 
-parsed_data = parse_excel_table(file_path, sheet_name,start_cell, end_cell)
-for data in parsed_data:
-    print(data)
+def run_parse():
+    file_path = file_entry.get()
+    sheet_name = sheet_entry.get()
+    start_cell = start_entry.get()
+    end_cell = end_entry.get()
 
+    if not all([file_path, sheet_name, start_cell, end_cell]):
+        print("Please fill in all fields.")
+        return
 
+    if not (start_cell[0].isalpha() and start_cell[1:].isdigit() and end_cell[0].isalpha() and end_cell[1:].isdigit()):
+        print("Invalid cell coordinates.")
+        return
+    
+    start_row = int(start_cell[1:])
+    end_row = int(end_cell[1:])
 
+    # Check if start cell is before end cell
+    if start_row >= end_row:
+        print("Start cell must be before end cell.")
+        return
+
+    start_cell = (start_cell[0], int(start_cell[1:]))
+    end_cell = (end_cell[0], int(end_cell[1:]))
+
+    try:
+        wb = openpyxl.load_workbook(file_path)
+    except FileNotFoundError:
+        print("File not found.")
+        return
+
+    sheet = wb[sheet_name]
+
+    # Check for empty lines between start and end rows
+    for row_num in range(start_row + 1, end_row):
+        if all(cell.value is None for cell in sheet[row_num]):
+            print("Empty line found between the provided cells.")
+            return
+
+    parsed_data = parse_excel_table(file_path, sheet_name, start_cell, end_cell)
+    for data in parsed_data:
+        print(data)
+
+# Create the main window
+root = tk.Tk()
+root.title("Excel Parser")
+
+# File path entry
+file_label = tk.Label(root, text="File Path:")
+file_label.grid(row=0, column=0, sticky="e")
+file_entry = tk.Entry(root, width=50)
+file_entry.grid(row=0, column=1, columnspan=2)
+file_button = tk.Button(root, text="Browse", command=lambda: browse_file(file_entry))
+file_button.grid(row=0, column=3)
+
+# Sheet name entry
+sheet_label = tk.Label(root, text="Sheet Name:")
+sheet_label.grid(row=1, column=0, sticky="e")
+sheet_entry = tk.Entry(root)
+sheet_entry.grid(row=1, column=1)
+
+# Start cell entry
+start_label = tk.Label(root, text="Start Cell:")
+start_label.grid(row=2, column=0, sticky="e")
+start_entry = tk.Entry(root)
+start_entry.grid(row=2, column=1)
+
+# End cell entry
+end_label = tk.Label(root, text="End Cell:")
+end_label.grid(row=3, column=0, sticky="e")
+end_entry = tk.Entry(root)
+end_entry.grid(row=3, column=1)
+
+# Run button
+run_button = tk.Button(root, text="Run", command=run_parse)
+run_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+# Start the GUI main loop
+root.mainloop()
