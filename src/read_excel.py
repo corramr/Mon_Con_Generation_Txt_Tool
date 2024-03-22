@@ -1,6 +1,6 @@
 import openpyxl
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 def parse_excel_table(file_path, sheet_name, start_cell, end_cell):
     data_list = []
@@ -30,7 +30,8 @@ def parse_excel_table(file_path, sheet_name, start_cell, end_cell):
             "Lsb": row[12].value,
             "Min": row[13].value,
             "Max": row[14].value,
-            "Weight": row[15].value
+            "Weight": row[15].value,
+            "Generate_Code": True
         }
         data_list.append(data)
 
@@ -62,11 +63,11 @@ def run_parse():
     end_cell = end_entry.get()
 
     if not all([file_path, sheet_name, start_cell, end_cell]):
-        print("Please fill in all fields.")
+        messagebox.showerror("Error", "Please fill in all fields.")
         return
 
     if not (start_cell[0].isalpha() and start_cell[1:].isdigit() and end_cell[0].isalpha() and end_cell[1:].isdigit()):
-        print("Invalid cell coordinates.")
+        messagebox.showerror("Error", "Invalid cell coordinates.")
         return
     
     start_row = int(start_cell[1:])
@@ -74,16 +75,24 @@ def run_parse():
 
     # Check if start cell is before end cell
     if start_row >= end_row:
-        print("Start cell must be before end cell.")
+        messagebox.showerror("Error", "Start cell must be before end cell.")
         return
 
     start_cell = (start_cell[0], int(start_cell[1:]))
     end_cell = (end_cell[0], int(end_cell[1:]))
 
+    start_col = start_cell[0]
+    end_col = end_cell[0]
+
+    # Check if end cell column is before column "P"
+    if end_col < "P":
+        messagebox.showerror("Error", "End cell column cannot be before column 'P'.")
+        return
+
     try:
         wb = openpyxl.load_workbook(file_path)
     except FileNotFoundError:
-        print("File not found.")
+        messagebox.showerror("Error", "File not found.")
         return
 
     sheet = wb[sheet_name]
@@ -91,7 +100,7 @@ def run_parse():
     # Check for empty lines between start and end rows
     for row_num in range(start_row + 1, end_row):
         if all(cell.value is None for cell in sheet[row_num]):
-            print("Empty line found between the provided cells.")
+            messagebox.showerror("Error", "Empty line found between the provided cells.")
             return
 
     parsed_data = parse_excel_table(file_path, sheet_name, start_cell, end_cell)
