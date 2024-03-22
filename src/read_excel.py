@@ -31,7 +31,7 @@ def parse_excel_table(file_path, sheet_name, start_cell, end_cell):
             "Min": row[13].value,
             "Max": row[14].value,
             "Weight": row[15].value,
-            "Generate_Code": True
+            "Generate_Code": True  # Initialize Generate Code field to True
         }
         data_list.append(data)
 
@@ -56,6 +56,29 @@ def browse_file(entry):
     entry.delete(0, tk.END)
     entry.insert(0, filename)
 
+def show_data_popup(parsed_data):
+    popup = tk.Toplevel()
+    popup.title("Parsed Data")
+
+    # Frame to hold the data list and checkboxes
+    frame = tk.Frame(popup)
+    frame.pack(padx=10, pady=10)
+
+    # Function to update Generate Code value
+    def update_generate_code(index, value):
+        parsed_data[index]["Generate_Code"] = value
+
+    # Create checkboxes for each data object
+    for index, data in enumerate(parsed_data):
+        checkbox_var = tk.BooleanVar(value=True)
+        checkbox = tk.Checkbutton(frame, text=data["IRS_Name"], variable=checkbox_var,
+                                   command=lambda index=index, var=checkbox_var: update_generate_code(index, var.get()))
+        checkbox.grid(row=index, column=0, sticky="w")
+
+    # Button to close the popup
+    close_button = tk.Button(popup, text="Close", command=popup.destroy)
+    close_button.pack(pady=10)
+
 def run_parse():
     file_path = file_entry.get()
     sheet_name = sheet_entry.get()
@@ -78,9 +101,6 @@ def run_parse():
         messagebox.showerror("Error", "Start cell must be before end cell.")
         return
 
-    start_cell = (start_cell[0], int(start_cell[1:]))
-    end_cell = (end_cell[0], int(end_cell[1:]))
-
     start_col = start_cell[0]
     end_col = end_cell[0]
 
@@ -88,6 +108,9 @@ def run_parse():
     if end_col < "P":
         messagebox.showerror("Error", "End cell column cannot be before column 'P'.")
         return
+
+    start_cell = (start_col, int(start_cell[1:]))
+    end_cell = (end_col, int(end_cell[1:]))
 
     try:
         wb = openpyxl.load_workbook(file_path)
@@ -104,8 +127,7 @@ def run_parse():
             return
 
     parsed_data = parse_excel_table(file_path, sheet_name, start_cell, end_cell)
-    for data in parsed_data:
-        print(data)
+    show_data_popup(parsed_data)
 
 # Create the main window
 root = tk.Tk()
@@ -143,3 +165,4 @@ run_button.grid(row=4, column=0, columnspan=2, pady=10)
 
 # Start the GUI main loop
 root.mainloop()
+
