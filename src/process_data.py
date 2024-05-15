@@ -1,6 +1,18 @@
 def process_data(raw_data):
 
-    # ...
+    # Initialized processed data
+    processed_data = []
+
+    # Get the 'function' column and remove duplicates
+    components = list(set(raw_data['Function']))
+
+    raw_data
+
+    # for component in components:
+    #     component_dict = {}
+    #     for 
+    #     process_data.append()
+
 
     processed_data = [
         {

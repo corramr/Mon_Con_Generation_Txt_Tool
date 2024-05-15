@@ -1,0 +1,16 @@
+{
+  "selected_fields": [
+    "Function",
+    "Signal name",
+    "ICD VARIABLE_NAME",
+    "msg id\n\n",
+    "word start",
+    "word end",
+    "msb",
+    "lsb",
+    "type (IRS)",
+    "Min",
+    "Max",
+    "RES /\nLSB weight"
+  ]
+}
