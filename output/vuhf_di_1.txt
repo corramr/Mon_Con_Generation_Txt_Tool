@@ -1,0 +1,285 @@
+-- Mon types
+type VUHF_FREQUENCY_TENS_DIGIT _Mon_Type   is limited private
+type VUHF_FREQUENCY_ONES_DIGIT _Mon_Type   is limited private
+type VUHF_FREQUENCY_TENTHS_DIGIT_Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_50_kHz    _Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_25_kHz    _Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_200_MHz   _Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_100_MHz _Mon_Type   is limited private
+type VUHF_FILL STATUS_Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type   is limited private
+type VUHF_RT_MODE_Mon_Type   is limited private
+type VUHF_SQUELCH _Mon_Type   is limited private
+type VUHF_MODULATION _Mon_Type   is limited private
+type VUHF_OFFSET_10k _Mon_Type   is limited private
+type VUHF_OFFSET_5k _Mon_Type   is limited private
+type VUHF_CHANNEL_NUMBER_Mon_Type   is limited private
+type VUHF_MARITIME_MODE _Mon_Type   is limited private
+type VUHF_MARITIME_STATION       _Mon_Type   is limited private
+type VUHF_MARITIME_CHANNEL_NUMBER_Mon_Type   is limited private
+type VUHF_WAVE_FORM_Mon_Type   is limited private
+type VUHF_AJ_SELECT_Mon_Type   is limited private
+type VUHF_AJ_MASTER_Mon_Type   is limited private
+type VUHF_TIME_RECEIVED_Mon_Type   is limited private
+type VUHF_HAILING DETECTION_Mon_Type   is limited private
+type VUHF_WRISTWATCH_TIME_HOURS_Mon_Type   is limited private
+type VUHF_WRISTWATCH_TIME_MINUTES_Mon_Type   is limited private
+type VUHF_DAY_OF_MONTH_Mon_Type   is limited private
+type VUHF_TIME_FIGURE_OF_MERIT_Mon_Type   is limited private
+type VUHF_NET_ID_EXTENSION_Mon_Type   is limited private
+type VUHF_NET_ID_EXTENSION_Mon_Type   is limited private
+type VUHF_SATURN_TIME_MASTER_TFOM_DISABLE_Mon_Type   is limited private
+type VUHF_RADIO_GO/NO-GO_Mon_Type   is limited private
+type VUHF_ANTNN_GO/NO-GO_Mon_Type   is limited private
+type VUHF_BREAK-IN_RANGE_EXT_Mon_Type   is limited private
+type VUHF_BREAK-IN_RANGE_LIMIT_Mon_Type   is limited private
+type VUHF_BREAK-IN_TX_EXT_Mon_Type   is limited private
+type VUHF_PREAMBLE_LENGHT_Mon_Type   is limited private
+type VUHF_TIME_SEARCH_FUNCTION_Mon_Type   is limited private
+type VUHF_BREAK-IN_ENABLE_Mon_Type   is limited private
+type VUHF_SPLIT_SYNCHRONIZATION_ENABLED_Mon_Type   is limited private
+type VUHF_TIME_SEARCH_STATUS_Mon_Type   is limited private
+
+
+
+-- Get mon procedures
+procedure Get_FREQUENCY_TENS_DIGIT 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_TENS_DIGIT _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_TENS_DIGIT _Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_ONES_DIGIT 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_ONES_DIGIT _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_ONES_DIGIT _Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_TENTHS_DIGIT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_TENTHS_DIGIT_Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_TENTHS_DIGIT_Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_50_kHz    
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_50_kHz    _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_50_kHz    _Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_25_kHz    
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_25_kHz    _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_25_kHz    _Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_200_MHz   
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_200_MHz   _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_200_MHz   _Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_100_MHz 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_100_MHz _Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_100_MHz _Type;
+   Valid     : out Boolean);
+
+procedure Get_FILL STATUS
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FILL STATUS_Mon_Type;
+   Value     : out VUHF_Types.FILL STATUS_Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_200_wd_12_MHz
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_200_wd_12_MHz_Type;
+   Valid     : out Boolean);
+
+procedure Get_RT_MODE
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_RT_MODE_Mon_Type;
+   Value     : out VUHF_Types.RT_MODE_Type;
+   Valid     : out Boolean);
+
+procedure Get_SQUELCH 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_SQUELCH _Mon_Type;
+   Value     : out VUHF_Types.SQUELCH _Type;
+   Valid     : out Boolean);
+
+procedure Get_MODULATION 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_MODULATION _Mon_Type;
+   Value     : out VUHF_Types.MODULATION _Type;
+   Valid     : out Boolean);
+
+procedure Get_OFFSET_10k 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_OFFSET_10k _Mon_Type;
+   Value     : out VUHF_Types.OFFSET_10k _Type;
+   Valid     : out Boolean);
+
+procedure Get_OFFSET_5k 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_OFFSET_5k _Mon_Type;
+   Value     : out VUHF_Types.OFFSET_5k _Type;
+   Valid     : out Boolean);
+
+procedure Get_CHANNEL_NUMBER
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_CHANNEL_NUMBER_Mon_Type;
+   Value     : out VUHF_Types.CHANNEL_NUMBER_Type;
+   Valid     : out Boolean);
+
+procedure Get_MARITIME_MODE 
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_MARITIME_MODE _Mon_Type;
+   Value     : out VUHF_Types.MARITIME_MODE _Type;
+   Valid     : out Boolean);
+
+procedure Get_MARITIME_STATION       
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_MARITIME_STATION       _Mon_Type;
+   Value     : out VUHF_Types.MARITIME_STATION       _Type;
+   Valid     : out Boolean);
+
+procedure Get_MARITIME_CHANNEL_NUMBER
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_MARITIME_CHANNEL_NUMBER_Mon_Type;
+   Value     : out VUHF_Types.MARITIME_CHANNEL_NUMBER_Type;
+   Valid     : out Boolean);
+
+procedure Get_WAVE_FORM
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_WAVE_FORM_Mon_Type;
+   Value     : out VUHF_Types.WAVE_FORM_Type;
+   Valid     : out Boolean);
+
+procedure Get_AJ_SELECT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_AJ_SELECT_Mon_Type;
+   Value     : out VUHF_Types.AJ_SELECT_Type;
+   Valid     : out Boolean);
+
+procedure Get_AJ_MASTER
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_AJ_MASTER_Mon_Type;
+   Value     : out VUHF_Types.AJ_MASTER_Type;
+   Valid     : out Boolean);
+
+procedure Get_TIME_RECEIVED
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_TIME_RECEIVED_Mon_Type;
+   Value     : out VUHF_Types.TIME_RECEIVED_Type;
+   Valid     : out Boolean);
+
+procedure Get_HAILING DETECTION
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_HAILING DETECTION_Mon_Type;
+   Value     : out VUHF_Types.HAILING DETECTION_Type;
+   Valid     : out Boolean);
+
+procedure Get_WRISTWATCH_TIME_HOURS
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_WRISTWATCH_TIME_HOURS_Mon_Type;
+   Value     : out VUHF_Types.WRISTWATCH_TIME_HOURS_Type;
+   Valid     : out Boolean);
+
+procedure Get_WRISTWATCH_TIME_MINUTES
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_WRISTWATCH_TIME_MINUTES_Mon_Type;
+   Value     : out VUHF_Types.WRISTWATCH_TIME_MINUTES_Type;
+   Valid     : out Boolean);
+
+procedure Get_DAY_OF_MONTH
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_DAY_OF_MONTH_Mon_Type;
+   Value     : out VUHF_Types.DAY_OF_MONTH_Type;
+   Valid     : out Boolean);
+
+procedure Get_TIME_FIGURE_OF_MERIT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_TIME_FIGURE_OF_MERIT_Mon_Type;
+   Value     : out VUHF_Types.TIME_FIGURE_OF_MERIT_Type;
+   Valid     : out Boolean);
+
+procedure Get_NET_ID_EXTENSION
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_NET_ID_EXTENSION_Mon_Type;
+   Value     : out VUHF_Types.NET_ID_EXTENSION_Type;
+   Valid     : out Boolean);
+
+procedure Get_NET_ID_EXTENSION
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_NET_ID_EXTENSION_Mon_Type;
+   Value     : out VUHF_Types.NET_ID_EXTENSION_Type;
+   Valid     : out Boolean);
+
+procedure Get_SATURN_TIME_MASTER_TFOM_DISABLE
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_SATURN_TIME_MASTER_TFOM_DISABLE_Mon_Type;
+   Value     : out VUHF_Types.SATURN_TIME_MASTER_TFOM_DISABLE_Type;
+   Valid     : out Boolean);
+
+procedure Get_RADIO_GO/NO-GO
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_RADIO_GO/NO-GO_Mon_Type;
+   Value     : out VUHF_Types.RADIO_GO/NO-GO_Type;
+   Valid     : out Boolean);
+
+procedure Get_ANTNN_GO/NO-GO
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_ANTNN_GO/NO-GO_Mon_Type;
+   Value     : out VUHF_Types.ANTNN_GO/NO-GO_Type;
+   Valid     : out Boolean);
+
+procedure Get_BREAK-IN_RANGE_EXT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_BREAK-IN_RANGE_EXT_Mon_Type;
+   Value     : out VUHF_Types.BREAK-IN_RANGE_EXT_Type;
+   Valid     : out Boolean);
+
+procedure Get_BREAK-IN_RANGE_LIMIT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_BREAK-IN_RANGE_LIMIT_Mon_Type;
+   Value     : out VUHF_Types.BREAK-IN_RANGE_LIMIT_Type;
+   Valid     : out Boolean);
+
+procedure Get_BREAK-IN_TX_EXT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_BREAK-IN_TX_EXT_Mon_Type;
+   Value     : out VUHF_Types.BREAK-IN_TX_EXT_Type;
+   Valid     : out Boolean);
+
+procedure Get_PREAMBLE_LENGHT
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_PREAMBLE_LENGHT_Mon_Type;
+   Value     : out VUHF_Types.PREAMBLE_LENGHT_Type;
+   Valid     : out Boolean);
+
+procedure Get_TIME_SEARCH_FUNCTION
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_TIME_SEARCH_FUNCTION_Mon_Type;
+   Value     : out VUHF_Types.TIME_SEARCH_FUNCTION_Type;
+   Valid     : out Boolean);
+
+procedure Get_BREAK-IN_ENABLE
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_BREAK-IN_ENABLE_Mon_Type;
+   Value     : out VUHF_Types.BREAK-IN_ENABLE_Type;
+   Valid     : out Boolean);
+
+procedure Get_SPLIT_SYNCHRONIZATION_ENABLED
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_SPLIT_SYNCHRONIZATION_ENABLED_Mon_Type;
+   Value     : out VUHF_Types.SPLIT_SYNCHRONIZATION_ENABLED_Type;
+   Valid     : out Boolean);
+
+procedure Get_TIME_SEARCH_STATUS
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_TIME_SEARCH_STATUS_Mon_Type;
+   Value     : out VUHF_Types.TIME_SEARCH_STATUS_Type;
+   Valid     : out Boolean);
+

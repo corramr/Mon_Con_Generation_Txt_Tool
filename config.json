@@ -11,6 +11,12 @@
     "type (IRS)",
     "Min",
     "Max",
-    "RES /\nLSB weight"
+    "RES /\nLSB weight",
+    "IN / OUT",
+    "MON DATA VALIDITY",
+    "MON FORMAT VALIDITY",
+    "INDEX NAME",
+    "INDEX NUM",
+    "ENABLED"
   ]
 }

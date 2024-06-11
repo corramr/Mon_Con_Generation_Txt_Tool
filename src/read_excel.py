@@ -6,8 +6,7 @@ def read_excel_file(file_path, sheet, fields):
     # Load the Excel file into a pandas DataFrame
     df = pd.read_excel(file_path, sheet_name=sheet)
 
-    # Assuming 'TODO' is the column name that you want to filter by
-    # and it contains a boolean or equivalent indicator for the rows to process
+    # Filter specific messages (filtering rows)
     filtered_df = df[
         (df["Signal name"] == "VUx Status Data")
         | (df["Signal name"] == "VUx Mode")
@@ -16,7 +15,7 @@ def read_excel_file(file_path, sheet, fields):
         | (df["Signal name"] == "VUx IBIT/PBIT Status")
     ]
 
-    # Select only the specified fields (columns)
+    # Select only the specified fields (filtering columns)
     selected_df = filtered_df[fields]
 
     # Convert the filtered and selected DataFrame to a string
