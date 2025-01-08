@@ -1,0 +1,28 @@
+
+
+-> account for records (e.g. Data Fill)
+-> account for words which span across more than 1 word
+-> account for fields where dev_index appears
+-> Where to get Dev_Index type ? From Fmsb_Config_Types.Vuhf_Index -> Add field
+-> Insert modif in someway (in the UI)
+
+
+-> Execution fails if: 
+   1) File to be read, not found => file reading error
+   2) Fields to be read not found => excel filling error
+   3) Field values to be read not valid => excel filling error
+   4) Word start and msb matches another mon/con's  => excel filling error
+   5) Data format does not coincide with msb and lsb => excel filling error
+
+-> Processing data
+   1) togliere spazi alla fine della parola
+   2) mettere il pascal case
+   
+
+-> UI: 
+
+-> Come rendere il tool flessibile nel caso non ci piaccia una parola nel file excel ? 
+   Potresti fare un find and replace e il tool processa questo file modificato
+
+
+

@@ -73,5 +73,29 @@ def process_data(raw_data):
 
         data_dict[row["Function"]][row["IN / OUT"]][row["Signal name"]].append(data_row)
 
+    # Filter and Sort the lists in the nested dictionary
+    for function_dict in data_dict.values():
+        for in_out_dict in function_dict.values():
+            for signal_name, data_list in in_out_dict.items():
+
+                # filter according to "ENABLED" field
+                filtered_list = [data for data in data_list if data.enabled]
+
+                # Sort with custom key
+                sorted_list = sorted(filtered_list, key=lambda x: (x.word_start, x.msb))
+
+                # Check for duplicates
+                for i in range(1, len(sorted_list)):
+                    if (
+                        sorted_list[i].word_start == sorted_list[i - 1].word_start
+                        and sorted_list[i].msb == sorted_list[i - 1].msb
+                    ):
+                        raise ValueError(
+                            f"Duplicate entry found with the same 'word_start' and 'msb' for Signal name: {signal_name}"
+                        )
+
+                # Update the list with the sorted one
+                in_out_dict[signal_name] = sorted_list
+
     # Return dictionary
     return data_dict

@@ -1,5 +1,29 @@
 import os
 
+# define dictionary for Mon data format
+mon_data_format_dict = {
+    "Scaled_Float": "Dig6_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Scaled_Float_15": "Dig15_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Dec_Float_32": "Dec_Float_32 => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Dec_Float_64": "Dec_Float_64 => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Scaled_Int": """
+Scaled_Int_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address,
+Scaled_Int_Size => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Size)
+""",
+    "Straight_Int": """
+Straight_Int_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address,
+Straight_Int_Size => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Size)
+""",
+    "Lookup_Straight_1_Bit": "Lu_S_1_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_3_Bit": "Lu_S_2_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_2_Bit": "Lu_S_3_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_4_Bit": "Lu_S_4_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_6_Bit": "Lu_S_6_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_9_Bit": "Lu_S_9_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    # "Simple_String" : ""
+}
+
+
 # generate content for file "di.1.txt"
 def generate_di_1_code(file, device, device_data_dict):
 
@@ -73,23 +97,96 @@ def generate_di_2_code(file, device, device_data_dict):
     text_chunks = TextChunks()
 
     # # loop over signals within device
-    # for signal in device_data_dict.keys():
-    #     # loop over input messages within signal
-    #     for in_out in device_data_dict[signal].keys():
-    #         if in_out == "IN":
-    #             text_chunks.tableDeclaration["in"].append(
-    #                 "In_" + device + "_" + signal + "_Table"
-    #             )
-    #         elif in_out == "OUT":
-    #             text_chunks.tableDeclaration["out"].append(
-    #                 "Out_" + device + "_" + signal + "_Table"
-    #             )
+    for in_out in device_data_dict.keys():
+        # input case
+        if in_out == "IN":
+            # loop over input messages within signal
+            for signal in device_data_dict["IN"].keys():
+                # store data into table declaration field
+                text_chunks.tableDeclaration["in"].append(
+                    "In"
+                    + "_"
+                    + device
+                    + "_"
+                    + signal
+                    + "_Table : "
+                    + "In_Table_Info_Type\n"
+                )
 
-    # # write table declaration
-    # if len() > 0:
-    #     # add heading comments
-    #     text_chunks.tableDeclaration["in"].insert(0, "--Define input tables\n")
-    #     # write
+            # store data for table assignment
+            for signal, data_list in device_data_dict["IN"].items():
+                for data in data_list:
+
+                    # define dict for Mon Validity Kind
+                    mon_validity_kind_dict: {
+                        "Trustable": [
+                            "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
+                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Valid'Address);",
+                        ],  # type: ignore
+                        "Non_Trustable": [
+                            "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
+                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Valid'Address);",
+                        ],  # type: ignore
+                        "None": ["(Mon_Validity_Kind => Conversion_Types.Non_Trustable);"],  # type: ignore
+                    }  # type: ignore
+
+                    # mon_validity_multilines = "\n".join(
+                    #     mon_validity_kind_dict[data.mon_format_validity].values()
+                    # )
+
+#                     text_chunks.tableAssignment["in"].append(
+#                         f"""
+# In_{device}_{signal}_Msg ({data.index_name})
+#    ({device}_Icd_Types.{data.variable_name}).Mon_Validity :=
+#       {mon_validity_multilines}
+
+# In_{device}_{signal}_Msg ({data.index_name})
+#    ({device}_Icd_Types.{data.variable_name}).Mon_Data :=
+#       (Mon_Validity_Kind => Conversion_Types.Non_Trustable,
+#       Non_Trust_Ptr => {device}_State.{device}_{signal}_{data.variable_name}_Mon({data.index_name}).Valid'Address);
+# """
+#                     )
+
+        # output case
+        elif in_out == "OUT":
+            # loop over input messages within signal
+            for signal in device_data_dict["OUT"].keys():
+                # store data into table declaration field
+                text_chunks.tableDeclaration["out"].append(
+                    "Out"
+                    + "_"
+                    + device
+                    + "_"
+                    + signal
+                    + "_Table : "
+                    + "Out_Table_Info_Type\n"
+                )
+
+    # write table declaration
+    for in_out in text_chunks.tableDeclaration.keys():
+        if len(text_chunks.tableDeclaration[in_out]) > 0:
+
+            # input case
+            if in_out == "in":
+                # add heading comments
+                text_chunks.tableDeclaration["in"].insert(0, "--Define input tables\n")
+                # add some new empty lines at the end of mon types as separators
+                text_chunks.tableDeclaration["in"].append("\n\n\n")
+                # write
+                for input_table_declaration in text_chunks.tableDeclaration["in"]:
+                    file.write(input_table_declaration)
+
+            # output case
+            elif in_out == "out":
+                # add heading comments
+                text_chunks.tableDeclaration["out"].insert(
+                    0, "--Define output tables\n"
+                )
+                # add some new empty lines at the end of mon types as separators
+                text_chunks.tableDeclaration["in"].append("\n\n\n")
+                # write
+                for output_table_declaration in text_chunks.tableDeclaration["out"]:
+                    file.write(output_table_declaration)
 
 
 # generate content for file "icd_types.1.txt"
