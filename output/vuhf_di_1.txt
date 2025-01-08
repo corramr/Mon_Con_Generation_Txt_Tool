@@ -6,8 +6,6 @@ type VUHF_FREQUENCY_OFFSET_50_kHz    _Mon_Type   is limited private
 type VUHF_FREQUENCY_OFFSET_25_kHz    _Mon_Type   is limited private
 type VUHF_FREQUENCY_OFFSET_200_MHz   _Mon_Type   is limited private
 type VUHF_FREQUENCY_OFFSET_100_MHz _Mon_Type   is limited private
-type VUHF_FILL STATUS_Mon_Type   is limited private
-type VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type   is limited private
 type VUHF_RT_MODE_Mon_Type   is limited private
 type VUHF_SQUELCH _Mon_Type   is limited private
 type VUHF_MODULATION _Mon_Type   is limited private
@@ -26,6 +24,7 @@ type VUHF_WRISTWATCH_TIME_HOURS_Mon_Type   is limited private
 type VUHF_WRISTWATCH_TIME_MINUTES_Mon_Type   is limited private
 type VUHF_DAY_OF_MONTH_Mon_Type   is limited private
 type VUHF_TIME_FIGURE_OF_MERIT_Mon_Type   is limited private
+type VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type   is limited private
 type VUHF_NET_ID_EXTENSION_Mon_Type   is limited private
 type VUHF_NET_ID_EXTENSION_Mon_Type   is limited private
 type VUHF_SATURN_TIME_MASTER_TFOM_DISABLE_Mon_Type   is limited private
@@ -83,18 +82,6 @@ procedure Get_FREQUENCY_OFFSET_100_MHz
    (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
    Mon       : in  VUHF_FREQUENCY_OFFSET_100_MHz _Mon_Type;
    Value     : out VUHF_Types.FREQUENCY_OFFSET_100_MHz _Type;
-   Valid     : out Boolean);
-
-procedure Get_FILL STATUS
-   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
-   Mon       : in  VUHF_FILL STATUS_Mon_Type;
-   Value     : out VUHF_Types.FILL STATUS_Type;
-   Valid     : out Boolean);
-
-procedure Get_FREQUENCY_OFFSET_200_wd_12_MHz
-   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
-   Mon       : in  VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type;
-   Value     : out VUHF_Types.FREQUENCY_OFFSET_200_wd_12_MHz_Type;
    Valid     : out Boolean);
 
 procedure Get_RT_MODE
@@ -203,6 +190,12 @@ procedure Get_TIME_FIGURE_OF_MERIT
    (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
    Mon       : in  VUHF_TIME_FIGURE_OF_MERIT_Mon_Type;
    Value     : out VUHF_Types.TIME_FIGURE_OF_MERIT_Type;
+   Valid     : out Boolean);
+
+procedure Get_FREQUENCY_OFFSET_200_wd_12_MHz
+   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
+   Mon       : in  VUHF_FREQUENCY_OFFSET_200_wd_12_MHz_Mon_Type;
+   Value     : out VUHF_Types.FREQUENCY_OFFSET_200_wd_12_MHz_Type;
    Valid     : out Boolean);
 
 procedure Get_NET_ID_EXTENSION

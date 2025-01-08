@@ -1,0 +1,10 @@
+--Define input tables
+In_VUHF_VUx Status Data_Table : In_Table_Info_Type
+In_VUHF_VUx IBIT/PBIT Status_Table : In_Table_Info_Type
+In_VUHF_VUx SATURN Status_Table : In_Table_Info_Type
+
+
+
+--Define output tables
+Out_VUHF_VUx Mode_Table : Out_Table_Info_Type
+Out_VUHF_VUx SATURN Parameters_Table : Out_Table_Info_Type
