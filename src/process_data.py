@@ -6,7 +6,7 @@ class DataRow:
     def __init__(
         self,
         device,
-        message_name,
+        signal_name,
         variable_name,
         word_start,
         word_end,
@@ -24,7 +24,7 @@ class DataRow:
         enabled,
     ):
         self.device = device
-        self.message_name = message_name
+        self.signal_name = signal_name
         self.variable_name = variable_name
         self.word_start = word_start
         self.word_end = word_end
@@ -58,7 +58,7 @@ def process_data(filtered_data):
     for _, row in filtered_data.iterrows():
         data_row = DataRow(
             device=row["Function"],
-            message_name=row["Signal name"],
+            signal_name=row["Signal name"],
             variable_name=row["ICD VARIABLE_NAME"],
             word_start=row["word start"],
             word_end=row["word end"],
@@ -80,7 +80,7 @@ def process_data(filtered_data):
         # The data_row instance is allocated according to:
         # row["function"]     (device: VUHF, HF, ...)
         # row["IN / OUT"]     (in_out: IN, OUT)
-        # row["signal_name"]  (message_name: VUx Mode, VUx Status Data, ...)
+        # row["signal_name"]  (signal_name: VUx Mode, VUx Status Data, ...)
 
         # here below is reported an example of what data_dict might look like
         # data_dict = {

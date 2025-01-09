@@ -21,7 +21,7 @@ def main():
     # Read the Excel file, filter rows, and select specific fields
     filtered_data = read_excel_file(file_path, sheet, selected_fields)
     processed_data = process_data(filtered_data)
-    #generate_code(processed_data)
+    generate_code(processed_data)
 
 
 # define entry point
