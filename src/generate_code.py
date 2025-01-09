@@ -2,24 +2,24 @@ import os
 
 # define dictionary for Mon data format
 mon_data_format_dict = {
-    "Scaled_Float": "Dig6_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Scaled_Float_15": "Dig15_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Dec_Float_32": "Dec_Float_32 => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Dec_Float_64": "Dec_Float_64 => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Scaled_Float": "Dig6_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Scaled_Float_15": "Dig15_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Dec_Float_32": "Dec_Float_32 => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Dec_Float_64": "Dec_Float_64 => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
     "Scaled_Int": """
-Scaled_Int_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address,
-Scaled_Int_Size => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Size)
+Scaled_Int_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address,
+Scaled_Int_Size => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Size)
 """,
     "Straight_Int": """
-Straight_Int_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address,
-Straight_Int_Size => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Size)
+Straight_Int_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address,
+Straight_Int_Size => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Size)
 """,
-    "Lookup_Straight_1_Bit": "Lu_S_1_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_3_Bit": "Lu_S_2_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_2_Bit": "Lu_S_3_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_4_Bit": "Lu_S_4_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_6_Bit": "Lu_S_6_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_9_Bit": "Lu_S_9_Bit_Ptr => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_1_Bit": "Lu_S_1_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_3_Bit": "Lu_S_2_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_2_Bit": "Lu_S_3_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_4_Bit": "Lu_S_4_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_6_Bit": "Lu_S_6_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
+    "Lookup_Straight_9_Bit": "Lu_S_9_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
     # "Simple_String" : ""
 }
 
@@ -37,9 +37,11 @@ def generate_di_1_code(file, device, device_data_dict):
     # create instance
     text_chunks = TextChunks()
 
-    # loop over signals within device
+    # loop over signals within device ("VUx Mode", "VUx Status data", ...)
     for signal in device_data_dict["IN"].keys():
         # loop over input messages within signal
+        # each signal is made of several messages which are located in specific words
+        # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
             # store mon types
             text_chunks.monTypes.append(
@@ -121,11 +123,11 @@ def generate_di_2_code(file, device, device_data_dict):
                     mon_validity_kind_dict: {
                         "Trustable": [
                             "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
-                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Valid'Address);",
+                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Valid'Address);",
                         ],  # type: ignore
                         "Non_Trustable": [
                             "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
-                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.message_name}_Mon({data.index_name}).Valid'Address);",
+                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Valid'Address);",
                         ],  # type: ignore
                         "None": ["(Mon_Validity_Kind => Conversion_Types.Non_Trustable);"],  # type: ignore
                     }  # type: ignore
@@ -134,18 +136,18 @@ def generate_di_2_code(file, device, device_data_dict):
                     #     mon_validity_kind_dict[data.mon_format_validity].values()
                     # )
 
-#                     text_chunks.tableAssignment["in"].append(
-#                         f"""
-# In_{device}_{signal}_Msg ({data.index_name})
-#    ({device}_Icd_Types.{data.variable_name}).Mon_Validity :=
-#       {mon_validity_multilines}
+        #                     text_chunks.tableAssignment["in"].append(
+        #                         f"""
+        # In_{device}_{signal}_Msg ({data.index_name})
+        #    ({device}_Icd_Types.{data.variable_name}).Mon_Validity :=
+        #       {mon_validity_multilines}
 
-# In_{device}_{signal}_Msg ({data.index_name})
-#    ({device}_Icd_Types.{data.variable_name}).Mon_Data :=
-#       (Mon_Validity_Kind => Conversion_Types.Non_Trustable,
-#       Non_Trust_Ptr => {device}_State.{device}_{signal}_{data.variable_name}_Mon({data.index_name}).Valid'Address);
-# """
-#                     )
+        # In_{device}_{signal}_Msg ({data.index_name})
+        #    ({device}_Icd_Types.{data.variable_name}).Mon_Data :=
+        #       (Mon_Validity_Kind => Conversion_Types.Non_Trustable,
+        #       Non_Trust_Ptr => {device}_State.{device}_{signal}_{data.variable_name}_Mon({data.index_name}).Valid'Address);
+        # """
+        #                     )
 
         # output case
         elif in_out == "OUT":
@@ -199,38 +201,41 @@ def generate_state_1_code(file, device_data_dict):
     pass
 
 
-# generate files
+# entry point
 def generate_code(data_dict):
 
     # create output folder if not present
-    output_folder = "output"
+    output_folder = "output/final_output"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
+    # loop through
+    # device -> ("VUHF", "EGI", "TACAN", ...)
+    # device_data_dict -> dictonary associated to each device
     for device, device_data_dict in data_dict.items():
 
-        # di.1.txt
+        # generate file -> di.1.txt
         file_name = device.lower() + "_di_1.txt"
         file_path = os.path.join(output_folder, file_name)
 
         with open(file_path, "w", encoding="utf-8") as di_1_file:
             generate_di_1_code(di_1_file, device, device_data_dict)
 
-        # di.2.txt"
+        # generate file -> di.2.txt"
         file_name = device.lower() + "_di_2_.txt"
         file_path = os.path.join(output_folder, file_name)
 
         with open(file_path, "w", encoding="utf-8") as di_2_file:
             generate_di_2_code(di_2_file, device, device_data_dict)
 
-        # icd_types.1.txt
+        # generate file -> icd_types.1.txt
         file_name = device.lower() + "_icd_types_1.txt"
         file_path = os.path.join(output_folder, file_name)
 
         with open(file_path, "w", encoding="utf-8") as icd_types_1_file:
             generate_icd_types_1_code(icd_types_1_file, device_data_dict)
 
-        # state.1.txt
+        # generate file -> state.1.txt
         file_name = device.lower() + "_state_1.txt"
         file_path = os.path.join(output_folder, file_name)
 
