@@ -204,7 +204,7 @@ def generate_state_1_code(file, device_data_dict):
 # entry point
 def generate_code(data_dict):
 
-    # create output folder if not present
+    # create final_output folder if not present
     output_folder = "output/final_output"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)

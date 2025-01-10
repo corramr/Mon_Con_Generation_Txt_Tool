@@ -1,2 +1,3 @@
-__pycache__/  env/  .vscode/ 
-output
+output/
+venv/
+src/__pycache__
