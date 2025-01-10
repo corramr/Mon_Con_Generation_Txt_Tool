@@ -4,7 +4,7 @@ from src.generate_code import generate_code
 import os
 import json
 
-
+# entry point
 def main():
 
     # Specify the relative file path
