@@ -1,4 +1,5 @@
 import os
+from src import utils
 
 # define dictionary for Mon data format
 mon_data_format_dict = {
@@ -43,7 +44,8 @@ def generate_di_1_code(file, device, device_data_dict):
         # each signal is made of several messages which are located in specific words
         # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
-            # store mon types
+            # store mon types 
+            message.variable_name = utils.clean_string(message.variable_name) 
             text_chunks.monTypes.append(
                 "type "
                 + device
