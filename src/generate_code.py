@@ -1,6 +1,8 @@
 import os
 from src import utils
 
+
+
 # define dictionary for Mon data format
 mon_data_format_dict = {
     "Scaled_Float": "Dig6_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
@@ -29,14 +31,16 @@ Straight_Int_Size => {device}_State.{device}_{data.variable_name}_Mon({data.inde
 def generate_di_1_code(file, device, device_data_dict):
 
     # define text chunks class present "di.1.ada"
-    class TextChunks:
-        def __init__(self):
-            # Initializing each field as an empty list
-            self.monTypes = []
-            self.monGetProcedures = []
 
     # create instance
-    text_chunks = TextChunks()
+    class Text_Chunk(): 
+        def __init__(self):
+    # Initializing each field as an empty list
+            self.monTypes = []
+            self.monGetProcedures = []
+            self.monArrayOf = []
+
+    text_chunks = Text_Chunk()
 
     # loop over signals within device ("VUx Mode", "VUx Status data", ...)
     for signal in device_data_dict["IN"].keys():
@@ -45,27 +49,69 @@ def generate_di_1_code(file, device, device_data_dict):
         # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
             # store mon types 
-            message.variable_name = utils.clean_string(message.variable_name) 
+            cleaned_variable_name = utils.clean_string(message.variable_name) 
+            cleaned_device = utils.clean_string(device) #Non so se può andare bene modificare il device name qui, non vorrei che non si trovasse più in futuro
+            
+            
             text_chunks.monTypes.append(
                 "type "
-                + device
+                + cleaned_device
                 + "_"
-                + message.variable_name
+                + cleaned_variable_name
                 + "_"
                 + "Mon_Type   "
                 + "is limited private\n"
             )
+            
+
 
             # store mon procedures
-            chunk = f"""procedure Get_{message.variable_name}
-   (Dev_Index : in  Fmsb_Config_Types.Vuhf_Index;
-   Mon       : in  {device}_{message.variable_name}_Mon_Type;
-   Value     : out {device}_Types.{message.variable_name}_Type;
+            chunk = f"""procedure Get_{cleaned_variable_name}  
+   (Dev_Index : in  Fmsb_Config_Types.{message.index_name}; 
+   Mon       : in  {cleaned_device}_{cleaned_variable_name}_Mon_Type;
+   Value     : out {cleaned_device}_Types.{cleaned_variable_name}_Type;
    Valid     : out Boolean);"""
 
             text_chunks.monGetProcedures.append(chunk + "\n\n")
 
+
+            #Store definition of MonArrayOf 
+            chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type is
+   array (Fmsb_Config_Types.{message.index_name}) of {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type;
+            """
+
+            text_chunks.monArrayOf.append(chunk + "\n\n")
+
+
+            chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type is
+   record
+      Value: ***PLACEHOLDER***;
+      Valid: Boolean;
+   end record;
+            """
+
+
+
+
+    ####################################################################
+
+    #forse è possibile creare una procedura un po' più pulita
     # write mon types
+
+
+    text_chunks.monTypes.insert(0, "-- Mon types\n")
+    text_chunks.monTypes.append("\n\n\n")
+
+    text_chunks.monGetProcedures.insert(0, "--Mon_Get Procedures\n")
+    text_chunks.monGetProcedures.append("\n\n\n")
+    
+    text_chunks.monArrayOf.insert(0, "--Mon Array of\n")
+    text_chunks.monArrayOf.append("\n\n\n")
+
+    utils.write_fields_to_file(text_chunks,file)
+
+
+    '''
     if len(text_chunks.monTypes) > 0:
         # add heading comments
         text_chunks.monTypes.insert(0, "-- Mon types\n")
@@ -82,6 +128,17 @@ def generate_di_1_code(file, device, device_data_dict):
         # write
         for mon_chunk in text_chunks.monGetProcedures:
             file.write(mon_chunk)
+
+    # write arrayof types
+    if len(text_chunks.monArrayOf) > 0:
+        # add heading comments
+        text_chunks.monArrayOf.insert(0, "-- Mon array of type\n")
+        # add some new empty lines at the end of mon types as separators
+        text_chunks.monArrayOf.append("\n\n\n")
+        # write
+        for mon_chunk in text_chunks.monArrayOf:
+            file.write(mon_chunk)
+            '''
 
 
 # generate content for file "di.2.txt"

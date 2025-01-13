@@ -4,5 +4,11 @@
 def clean_string(text):
     result = text.replace("/", "_").replace("-", "_")
     result = '_'.join(result.capitalize() for result in result.split('_')).strip()
-    print(result)
     return result
+
+def write_fields_to_file(object,file_name):
+    
+    for field, value in vars(object).items():        
+        if value:
+            for item in value:
+                file_name.write(item)                
