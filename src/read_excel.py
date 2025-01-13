@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 def read_excel_file(file_path, sheet, fields):
@@ -23,6 +24,11 @@ def read_excel_file(file_path, sheet, fields):
 
     # Convert the filtered and selected DataFrame to a string
     df_string = selected_df.to_string(index=False)
+
+    # create filtered_data folder if not present
+    output_folder = "output/filtered_data"
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
     # Save the filtered DataFrame to a text file
     with open("./output/filtered_data/filtered_data.txt", "w", encoding="utf-8") as file:
