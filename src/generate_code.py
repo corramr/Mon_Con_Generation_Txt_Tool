@@ -36,10 +36,11 @@ def generate_di_1_code(file, device, device_data_dict):
     class Text_Chunk(): 
         def __init__(self):
     # Initializing each field as an empty list
-            self.monTypes = ["Mon Types\n","\n\n\n"]
-            self.monGetProcedures = ["Mon Get procedures \n","\n\n\n"]
-            self.monArrayOf = ["Mon array of \n","\n\n\n"]
-            self.monSideType = ["Mon Side type\n","\n\n\n"]
+            self.monTypes = ["--Mon Types\n","\n\n\n"]
+            self.monGetProcedures = ["--Mon Get procedures \n","\n\n\n"]
+            self.monArrayOf = ["--Mon array of \n","\n\n\n"]
+            self.monSideType = ["--Mon Side type\n","\n\n\n"]
+            self.nullConstant = ["--Null constants\n","\n\n\n"]
 
     text_chunks = Text_Chunk()
 
@@ -85,40 +86,20 @@ def generate_di_1_code(file, device, device_data_dict):
 
             text_chunks.monSideType.insert(1,chunk + "\n\n")
 
+            # store null constants
+            
+            chunk = f"""NULL_{cleaned_variable_name.upper()}_MON_SIDE :
+   constant {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type :=
+      {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type'
+         (Value => ***PLACEHOLDER***,
+          Valid => False);
+        """
+            
+            text_chunks.nullConstant.insert(1,chunk + "\n\n")
     ####################################################################
 
     # write mon types
     utils.write_fields_to_file(text_chunks,file)
-
-
-    '''
-    if len(text_chunks.monTypes) > 0:
-        # add heading comments
-        text_chunks.monTypes.insert(0, "-- Mon types\n")
-        # add some new empty lines at the end of mon types as separators
-        text_chunks.monTypes.append("\n\n\n")
-        # write
-        for mon_chunk in text_chunks.monTypes:
-            file.write(mon_chunk)
-
-    # write mon procedures
-    if len(text_chunks.monGetProcedures) > 0:
-        # add heading comments
-        text_chunks.monGetProcedures.insert(0, "-- Get mon procedures\n")
-        # write
-        for mon_chunk in text_chunks.monGetProcedures:
-            file.write(mon_chunk)
-
-    # write arrayof types
-    if len(text_chunks.monArrayOf) > 0:
-        # add heading comments
-        text_chunks.monArrayOf.insert(0, "-- Mon array of type\n")
-        # add some new empty lines at the end of mon types as separators
-        text_chunks.monArrayOf.append("\n\n\n")
-        # write
-        for mon_chunk in text_chunks.monArrayOf:
-            file.write(mon_chunk)
-            '''
 
 
 # generate content for file "di.2.txt"
