@@ -36,9 +36,10 @@ def generate_di_1_code(file, device, device_data_dict):
     class Text_Chunk(): 
         def __init__(self):
     # Initializing each field as an empty list
-            self.monTypes = []
-            self.monGetProcedures = []
-            self.monArrayOf = []
+            self.monTypes = ["Mon Types\n","\n\n\n"]
+            self.monGetProcedures = ["Mon Get procedures \n","\n\n\n"]
+            self.monArrayOf = ["Mon array of \n","\n\n\n"]
+            self.monSideType = ["Mon Side type\n","\n\n\n"]
 
     text_chunks = Text_Chunk()
 
@@ -48,22 +49,15 @@ def generate_di_1_code(file, device, device_data_dict):
         # each signal is made of several messages which are located in specific words
         # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
-            # store mon types 
+           
+            # clean up variables without impacting raw data
             cleaned_variable_name = utils.clean_string(message.variable_name) 
-            cleaned_device = utils.clean_string(device) #Non so se può andare bene modificare il device name qui, non vorrei che non si trovasse più in futuro
+            cleaned_device = utils.clean_string(device)
             
-            
-            text_chunks.monTypes.append(
-                "type "
-                + cleaned_device
-                + "_"
-                + cleaned_variable_name
-                + "_"
-                + "Mon_Type   "
-                + "is limited private\n"
-            )
-            
+            # store mon types
+            chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type   is limited private\n"""
 
+            text_chunks.monTypes.insert(1,chunk +"\n\n")
 
             # store mon procedures
             chunk = f"""procedure Get_{cleaned_variable_name}  
@@ -72,17 +66,16 @@ def generate_di_1_code(file, device, device_data_dict):
    Value     : out {cleaned_device}_Types.{cleaned_variable_name}_Type;
    Valid     : out Boolean);"""
 
-            text_chunks.monGetProcedures.append(chunk + "\n\n")
+            text_chunks.monGetProcedures.insert(1, chunk + "\n\n")
 
-
-            #Store definition of MonArrayOf 
+            # store definition of MonArrayOf 
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type is
    array (Fmsb_Config_Types.{message.index_name}) of {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type;
             """
 
-            text_chunks.monArrayOf.append(chunk + "\n\n")
+            text_chunks.monArrayOf.insert(1,chunk + "\n\n")
 
-
+            # store side types
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type is
    record
       Value: ***PLACEHOLDER***;
@@ -90,24 +83,11 @@ def generate_di_1_code(file, device, device_data_dict):
    end record;
             """
 
-
-
+            text_chunks.monSideType.insert(1,chunk + "\n\n")
 
     ####################################################################
 
-    #forse è possibile creare una procedura un po' più pulita
     # write mon types
-
-
-    text_chunks.monTypes.insert(0, "-- Mon types\n")
-    text_chunks.monTypes.append("\n\n\n")
-
-    text_chunks.monGetProcedures.insert(0, "--Mon_Get Procedures\n")
-    text_chunks.monGetProcedures.append("\n\n\n")
-    
-    text_chunks.monArrayOf.insert(0, "--Mon Array of\n")
-    text_chunks.monArrayOf.append("\n\n\n")
-
     utils.write_fields_to_file(text_chunks,file)
 
 
