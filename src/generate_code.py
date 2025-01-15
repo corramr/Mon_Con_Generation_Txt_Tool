@@ -3,34 +3,10 @@ from src import utils
 
 
 
-# define dictionary for Mon data format
-mon_data_format_dict = {
-    "Scaled_Float": "Dig6_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Scaled_Float_15": "Dig15_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Dec_Float_32": "Dec_Float_32 => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Dec_Float_64": "Dec_Float_64 => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Scaled_Int": """
-Scaled_Int_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address,
-Scaled_Int_Size => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Size)
-""",
-    "Straight_Int": """
-Straight_Int_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address,
-Straight_Int_Size => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Size)
-""",
-    "Lookup_Straight_1_Bit": "Lu_S_1_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_3_Bit": "Lu_S_2_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_2_Bit": "Lu_S_3_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_4_Bit": "Lu_S_4_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_6_Bit": "Lu_S_6_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    "Lookup_Straight_9_Bit": "Lu_S_9_Bit_Ptr => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Value'Address",
-    # "Simple_String" : ""
-}
 
 
 # generate content for file "di.1.txt"
 def generate_di_1_code(file, device, device_data_dict):
-
-    # define text chunks class present "di.1.ada"
 
     # create instance
     class Text_Chunk(): 
@@ -59,6 +35,7 @@ def generate_di_1_code(file, device, device_data_dict):
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type   is limited private\n"""
 
             text_chunks.monTypes.insert(1,chunk +"\n\n")
+
 
             # store mon procedures
             chunk = f"""procedure Get_{cleaned_variable_name}  
@@ -109,7 +86,7 @@ def generate_di_2_code(file, device, device_data_dict):
     class TextChunks:
         def __init__(self):
             # Initializing each field as an empty list
-            self.tableDeclaration = {"in": [], "out": []}
+            self.tableDeclaration = {"In": ["--Input table type\n","\n\n\n"], "Out": ["--Output table type:\n","\n\n\n"]}
             self.messageDeclaration = {"in": [], "out": []}
             self.tableAssignment = {"in": [], "out": []}
             self.messageAssignment = {"in": [], "out": []}
@@ -117,14 +94,33 @@ def generate_di_2_code(file, device, device_data_dict):
 
     # create instance
     text_chunks = TextChunks()
+    
+    # clean up input for ADA standards
+    cleaned_device = utils.clean_string(device)
 
+    for in_out, values in device_data_dict.items():
+        cleaned_input = utils.clean_string(in_out)
+        for value in values:
+            cleaned_signal = utils.clean_string(value)
+            chunk = f"""{cleaned_input}_{cleaned_signal}_Table     : {cleaned_input}_Table_Info_Type;"""     
+            text_chunks.tableDeclaration[cleaned_input].insert(1,chunk+"\n\n")
+    
+
+    utils.write_fields_to_file(text_chunks,file)
+    '''
     # # loop over signals within device
     for in_out in device_data_dict.keys():
         # input case
+    
         if in_out == "IN":
             # loop over input messages within signal
             for signal in device_data_dict["IN"].keys():
                 # store data into table declaration field
+                cleaned_signal = utils.clean_string(signal)
+
+                chunk = f"""In_{cleaned_device}_{cleaned_signal}_Table    : In_Table_Info_Type\n"""
+                print(chunk)
+
                 text_chunks.tableDeclaration["in"].append(
                     "In"
                     + "_"
@@ -134,28 +130,21 @@ def generate_di_2_code(file, device, device_data_dict):
                     + "_Table : "
                     + "In_Table_Info_Type\n"
                 )
-
+    
             # store data for table assignment
             for signal, data_list in device_data_dict["IN"].items():
                 for data in data_list:
 
-                    # define dict for Mon Validity Kind
-                    mon_validity_kind_dict: {
-                        "Trustable": [
-                            "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
-                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Valid'Address);",
-                        ],  # type: ignore
-                        "Non_Trustable": [
-                            "(Mon_Validity_Kind => Conversion_Types.Non_Trustable,",
-                            f"Non_Trust_Ptr     => {device}_State.{device}_{data.variable_name}_Mon({data.index_name}).Valid'Address);",
-                        ],  # type: ignore
-                        "None": ["(Mon_Validity_Kind => Conversion_Types.Non_Trustable);"],  # type: ignore
-                    }  # type: ignore
+                    
+                    
+                    dictionary = mon_validity_kind_dict["Trustable"] 
+                    print(dictionary)
 
                     # mon_validity_multilines = "\n".join(
                     #     mon_validity_kind_dict[data.mon_format_validity].values()
                     # )
-
+                    '''
+    '''
         #                     text_chunks.tableAssignment["in"].append(
         #                         f"""
         # In_{device}_{signal}_Msg ({data.index_name})
@@ -183,6 +172,8 @@ def generate_di_2_code(file, device, device_data_dict):
                     + "_Table : "
                     + "Out_Table_Info_Type\n"
                 )
+
+'''
 
     # write table declaration
     for in_out in text_chunks.tableDeclaration.keys():
@@ -217,8 +208,37 @@ def generate_icd_types_1_code(file, device_data_dict):
 
 
 # generate content for file "state.1.txt"
-def generate_state_1_code(file, device_data_dict):
-    pass
+def generate_state_1_code(file, device_data_dict, device):
+    class Text_Chunk:
+        def __init__(self):
+            self.MonSubtypeDefinition = ["--Subtype definition: ","\n\n\n"]
+            self.MonSubtypeDeclaration = ["--Subtype declaration: ", "\n\n\n"]
+    
+    text_chunks = Text_Chunk()
+
+    for signal in device_data_dict["IN"].keys():
+        # loop over input messages within signal
+        # each signal is made of several messages which are located in specific words
+        # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
+        for message in device_data_dict["IN"][signal]:
+           cleaned_variable_name = utils.clean_string(message.variable_name)
+           cleaned_device = utils.clean_string(device)
+
+           # store mon subtype definition
+
+           mon_type = f"""{cleaned_device}_{cleaned_variable_name}_Mon_Type"""
+           mon_name = f"""{cleaned_device}_{cleaned_variable_name}_Mon"""
+
+           chunk = f"""subtype {mon_type}   is {cleaned_device}_Di.{cleaned_device}_{cleaned_variable_name}_Mon_Type;"""
+           
+           text_chunks.MonSubtypeDefinition.insert(1,chunk + "\n\n")
+
+           # store mon subtype declaration
+           chunk = f"""{mon_name}   : {mon_type}"""
+
+           text_chunks.MonSubtypeDeclaration.insert(1,chunk + "\n\n")
+    
+    utils.write_fields_to_file(text_chunks,file)
 
 
 # entry point
@@ -260,4 +280,4 @@ def generate_code(data_dict):
         file_path = os.path.join(output_folder, file_name)
 
         with open(file_path, "w", encoding="utf-8") as state_1_file:
-            generate_state_1_code(state_1_file, device_data_dict)
+            generate_state_1_code(state_1_file, device_data_dict, device)
