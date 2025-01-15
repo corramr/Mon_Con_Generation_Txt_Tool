@@ -22,6 +22,7 @@ class DataRow:
         index_name,
         index_num,
         enabled,
+        scr_num
     ):
         self.device = device
         self.signal_name = signal_name
@@ -40,6 +41,7 @@ class DataRow:
         self.index_name = index_name
         self.index_num = index_num
         self.enabled = enabled
+        self.scr_num = scr_num
 
 
 # entry point
@@ -74,6 +76,8 @@ def process_data(filtered_data):
             index_name=row["INDEX NAME"],
             index_num=row["INDEX NUM"],
             enabled=row["ENABLED"],
+            scr_num=row["SCR NUM"]
+
         )
 
         # We now allocate the current instance of data_row into data_dict structure

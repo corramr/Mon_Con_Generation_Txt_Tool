@@ -12,13 +12,26 @@ def generate_di_1_code(file, device, device_data_dict):
     class Text_Chunk(): 
         def __init__(self):
     # Initializing each field as an empty list
+            self.scr_num = 0
+            self.traceability_start = "-- @MODIF "+str(self.scr_num) +"\n"
+            self.traceability_end = "-- @/MODIF "+str(self.scr_num) +"\n"
             self.monTypes = ["--Mon Types\n","\n\n\n"]
             self.monGetProcedures = ["--Mon Get procedures \n","\n\n\n"]
             self.monArrayOf = ["--Mon array of \n","\n\n\n"]
             self.monSideType = ["--Mon Side type\n","\n\n\n"]
             self.nullConstant = ["--Null constants\n","\n\n\n"]
 
+        def update_scr(self,new_scr):
+            self.scr_num = new_scr
+            self.traceability_start = "-- @MODIF "+str(self.scr_num) +"\n"
+            self.traceability_end = "-- @/MODIF "+str(self.scr_num) +"\n"
+            #self.monTypes[0] = self.traceability_start
+            #self.monTypes[len(self.monTypes)] = self.traceability_end
+    
     text_chunks = Text_Chunk()
+    first_row = True 
+
+
 
     # loop over signals within device ("VUx Mode", "VUx Status data", ...)
     for signal in device_data_dict["IN"].keys():
@@ -26,6 +39,21 @@ def generate_di_1_code(file, device, device_data_dict):
         # each signal is made of several messages which are located in specific words
         # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
+            count = 1
+            
+            if first_row:
+                first_row = False
+                for attr_name, value in text_chunks.__dict__.items():
+                    print(type(value))
+
+                        # Skip non-list fields (e.g., scr_num), TODO for dictionaries
+                    if isinstance(value, list):
+                        value.insert(0,"-- @MODIF " + str(int(message.scr_num)) + "\n")
+                
+                text_chunks.scr_num = int(message.scr_num)
+
+            if text_chunks.scr_num != message.scr_num:
+                utils.update_traceability(text_chunks,count,message)
            
             # clean up variables without impacting raw data
             cleaned_variable_name = utils.clean_string(message.variable_name) 
@@ -33,6 +61,9 @@ def generate_di_1_code(file, device, device_data_dict):
             
             # store mon types
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type   is limited private\n"""
+
+            text_chunks.scr_number = message.scr_num
+            
 
             text_chunks.monTypes.insert(1,chunk +"\n\n")
 
@@ -73,6 +104,10 @@ def generate_di_1_code(file, device, device_data_dict):
         """
             
             text_chunks.nullConstant.insert(1,chunk + "\n\n")
+            count = count + 1
+    
+
+    text_chunks.monTypes.append("-- @/MODIF "+str(text_chunks.scr_num)+"\n")
     ####################################################################
 
     # write mon types
@@ -101,7 +136,7 @@ def generate_di_2_code(file, device, device_data_dict):
     for in_out, values in device_data_dict.items():
         cleaned_input = utils.clean_string(in_out)
         for value in values:
-            cleaned_signal = utils.clean_string(value)
+            cleaned_signal ="what"
             chunk = f"""{cleaned_input}_{cleaned_signal}_Table     : {cleaned_input}_Table_Info_Type;"""     
             text_chunks.tableDeclaration[cleaned_input].insert(1,chunk+"\n\n")
     

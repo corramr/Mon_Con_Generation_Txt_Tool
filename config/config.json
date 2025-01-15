@@ -17,6 +17,7 @@
     "MON FORMAT VALIDITY",
     "INDEX NAME",
     "INDEX NUM",
-    "ENABLED"
+    "ENABLED",
+    "SCR NUM"
   ]
 }

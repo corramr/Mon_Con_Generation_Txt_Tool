@@ -19,6 +19,23 @@ def write_fields_to_file(object,file_name):
                 for item in value:
                     file_name.write(item)      
 
+def update_traceability(text_chunks,count,message):
+
+
+    string_start = "-- @MODIF " + str(text_chunks.scr_num)+"\n"
+    string_end = "-- /@MODIF " + str(int(message.scr_num))+"\n"
+
+    for attr_name, value in text_chunks.__dict__.items():
+        # Skip non-list fields (e.g., scr_num), TODO for dictionaries
+        if isinstance(value, list):
+            # Ensure 'count' is within valid range
+            if 0 <= count <= len(value):
+                value.insert(count, string_start)
+                value.insert(count, string_end)
+            else:
+                print(f"Index {count} is out of bounds for field '{attr_name}'.")
+    text_chunks.scr_num = int(message.scr_num)
+
 #Misc types
 
 
