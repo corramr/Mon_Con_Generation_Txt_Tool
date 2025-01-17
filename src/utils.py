@@ -22,8 +22,8 @@ def write_fields_to_file(object,file_name):
 def update_traceability(text_chunks,count,message):
 
 
-    string_start = "-- @MODIF " + str(text_chunks.scr_num)+"\n"
-    string_end = "-- /@MODIF " + str(int(message.scr_num))+"\n"
+    string_start = "-- @MODIF " + str(text_chunks.scr_num)+"da update \n "
+    string_end = "-- /@MODIF " + str(int(message.scr_num))+"da update\n "
 
     for attr_name, value in text_chunks.__dict__.items():
         # Skip non-list fields (e.g., scr_num), TODO for dictionaries

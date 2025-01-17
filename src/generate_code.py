@@ -20,26 +20,19 @@ def generate_di_1_code(file, device, device_data_dict):
             self.monArrayOf = ["--Mon array of \n","\n\n\n"]
             self.monSideType = ["--Mon Side type\n","\n\n\n"]
             self.nullConstant = ["--Null constants\n","\n\n\n"]
-
-        def update_scr(self,new_scr):
-            self.scr_num = new_scr
-            self.traceability_start = "-- @MODIF "+str(self.scr_num) +"\n"
-            self.traceability_end = "-- @/MODIF "+str(self.scr_num) +"\n"
-            #self.monTypes[0] = self.traceability_start
-            #self.monTypes[len(self.monTypes)] = self.traceability_end
     
     text_chunks = Text_Chunk()
     first_row = True 
 
-
+    count = 2
 
     # loop over signals within device ("VUx Mode", "VUx Status data", ...)
     for signal in device_data_dict["IN"].keys():
+        print(str(len(device_data_dict["IN"][signal])))
         # loop over input messages within signal
         # each signal is made of several messages which are located in specific words
         # for example, the signal VUx Mode contains:  (Aj_Select, Aj_Master, Time_Mode, ...)
         for message in device_data_dict["IN"][signal]:
-            count = 1
             
             if first_row:
                 first_row = False
@@ -48,13 +41,13 @@ def generate_di_1_code(file, device, device_data_dict):
 
                         # Skip non-list fields (e.g., scr_num), TODO for dictionaries
                     if isinstance(value, list):
-                        value.insert(0,"-- @MODIF " + str(int(message.scr_num)) + "\n")
+                        value.insert(1,"-- @MODIF " + str(int(message.scr_num)) + "\n")
                 
                 text_chunks.scr_num = int(message.scr_num)
+                print("sono in if first")
 
-            if text_chunks.scr_num != message.scr_num:
-                utils.update_traceability(text_chunks,count,message)
-           
+            print("text chunk scr : "+ str(text_chunks.scr_num))
+            print("message scr: " + str(int(message.scr_num))) 
             # clean up variables without impacting raw data
             cleaned_variable_name = utils.clean_string(message.variable_name) 
             cleaned_device = utils.clean_string(device)
@@ -65,7 +58,7 @@ def generate_di_1_code(file, device, device_data_dict):
             text_chunks.scr_number = message.scr_num
             
 
-            text_chunks.monTypes.insert(1,chunk +"\n\n")
+            text_chunks.monTypes.insert(count,chunk +"\n\n")
 
 
             # store mon procedures
@@ -75,14 +68,14 @@ def generate_di_1_code(file, device, device_data_dict):
    Value     : out {cleaned_device}_Types.{cleaned_variable_name}_Type;
    Valid     : out Boolean);"""
 
-            text_chunks.monGetProcedures.insert(1, chunk + "\n\n")
+            text_chunks.monGetProcedures.insert(count, chunk + "\n\n")
 
             # store definition of MonArrayOf 
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Type is
    array (Fmsb_Config_Types.{message.index_name}) of {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type;
             """
 
-            text_chunks.monArrayOf.insert(1,chunk + "\n\n")
+            text_chunks.monArrayOf.insert(count,chunk + "\n\n")
 
             # store side types
             chunk = f"""type {cleaned_device}_{cleaned_variable_name}_Mon_Side_Type is
@@ -92,7 +85,7 @@ def generate_di_1_code(file, device, device_data_dict):
    end record;
             """
 
-            text_chunks.monSideType.insert(1,chunk + "\n\n")
+            text_chunks.monSideType.insert(count,chunk + "\n\n")
 
             # store null constants
             
@@ -103,16 +96,24 @@ def generate_di_1_code(file, device, device_data_dict):
           Valid => False);
         """
             
-            text_chunks.nullConstant.insert(1,chunk + "\n\n")
+            text_chunks.nullConstant.insert(count,chunk + "\n\n")
+            
             count = count + 1
-    
+            print(count)
+
+        if text_chunks.scr_num != message.scr_num:
+            print("entro in if diverso")
+            utils.update_traceability(text_chunks,count,message)
+
 
     text_chunks.monTypes.append("-- @/MODIF "+str(text_chunks.scr_num)+"\n")
+
+
+
     ####################################################################
 
     # write mon types
     utils.write_fields_to_file(text_chunks,file)
-
 
 # generate content for file "di.2.txt"
 def generate_di_2_code(file, device, device_data_dict):
