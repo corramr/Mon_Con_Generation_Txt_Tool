@@ -124,7 +124,7 @@ def generate_di_2_code(file, device, device_data_dict):
             # Initializing each field as an empty list
             self.tableDeclaration = {"In": ["--Input table type\n","\n\n\n"], "Out": ["--Output table type:\n","\n\n\n"]}
             self.messageDeclaration = {"in": [], "out": []}
-            self.tableAssignment = {"in": [], "out": []}
+            self.tableAssignment = {"In": [], "Out": []}
             self.messageAssignment = {"in": [], "out": []}
             self.monGetProcedures = []
 
@@ -136,11 +136,28 @@ def generate_di_2_code(file, device, device_data_dict):
 
     for in_out, values in device_data_dict.items():
         cleaned_input = utils.clean_string(in_out)
-        for value in values:
-            cleaned_signal ="what"
-            chunk = f"""{cleaned_input}_{cleaned_signal}_Table     : {cleaned_input}_Table_Info_Type;"""     
+        for signal in values:
+            cleaned_signal = utils.clean_string(signal)
+            data_table = f"""{cleaned_input}_{cleaned_signal}_Data_Table """
+            chunk = f"""{data_table}     : {cleaned_input}_Table_Info_Type;"""     
             text_chunks.tableDeclaration[cleaned_input].insert(1,chunk+"\n\n")
-    
+            print(str(signal))
+            for message in device_data_dict[in_out][signal]:
+                cleaned_index =utils.clean_string(message.index_name)
+                if in_out == "IN":
+                    chunk = f"""{data_table}({cleaned_index}) :=
+    Conversion.In_Table_Type_Info'
+        (Msg_Format   => {cleaned_device}_Icd_Types.In_{cleaned_device}_Data_Format'Address,
+         Mon_List     => In_{cleaned_device}_Data_Msg ({cleaned_index})'Address,
+         Num_Mons     => {cleaned_device}_Icd_Types.In_{cleaned_device}_Data_Format'Lenght);
+                """
+                else:
+                    chunk = f"""{data_table} ({cleaned_index}) := 
+    (Lenght_Of_Msg => {cleaned_device}_Icd_Types.OUT_{cleaned_signal.upper()}_LEN,
+     Msg_Format    => {cleaned_device}_Icd_Types.Out_{cleaned_device}_Data_Format'Address,
+     Con_List      => Out_{cleaned_device}_Data_Msg ({cleaned_index})'Address,
+     Num_Cons      => {cleaned_device}_Icd_Types.Out_{cleaned_device}_Data_Format'Lenght);"""
+            text_chunks.tableAssignment[cleaned_input].insert(1,chunk+"\n\n")
 
     utils.write_fields_to_file(text_chunks,file)
     '''
